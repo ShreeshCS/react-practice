@@ -4,7 +4,7 @@ type TableProps = {
 	data: Holiday[];
 };
 const Table: React.FC<TableProps> = (props) => {
-	const { data } = props;
+	// const { data } = props;
 	const columns = [
 		{
 			id: 0,
