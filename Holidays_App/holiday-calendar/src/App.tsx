@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from "./components/Dropdown";
-import { getCountries } from "./api/holidays.api";
+import { getCountries, getHoldidaysByCountry } from "./api/holidays.api";
+import { formatDateMMDDYYYY } from "./utility/app.util";
+import Table from "./components/Table";
 
 export interface Country {
 	isoCode: string;
@@ -10,21 +12,56 @@ export interface Country {
 	}[];
 	officialLanguages: string[];
 }
+
+export interface Holiday {
+	id: string;
+	name: {
+		language: string;
+		text: string;
+	}[];
+	startDate: string;
+	endDate: string;
+	type: string;
+	regionalScope: string;
+}
+
 function App() {
-	const [countries, setCountries] = useState([]);
-	const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+	const [countries, setCountries] = useState<Country[]>([]);
+	const [selectedCountry, setSelectedCountry] = useState<Country>();
+	const [holidays, setHolidays] = useState<Holiday[]>([]);
 	useEffect(() => {
-		const fetchHolidays = async () => {
+		const fetchCountries = async () => {
 			const countries = await getCountries();
 
 			setCountries(countries);
 		};
-		fetchHolidays();
+		fetchCountries();
 	}, []);
 
 	useEffect(() => {
-		// https://openholidaysapi.org/PublicHolidays?countryIsoCode=DE&validFrom=2023-01-01&validTo=2023-12-31&languageIsoCode=DE&subdivisionCode=DE-BE
-	}, [selectedCountry]);
+		const fetchHolidays = async () => {
+			const currentDate = new Date();
+			const validFrom = formatDateMMDDYYYY(currentDate);
+
+			const nextYearDate = new Date(currentDate);
+			nextYearDate.setFullYear(currentDate.getFullYear() + 1);
+			const validTo = formatDateMMDDYYYY(nextYearDate);
+
+			const countryIsoCode = selectedCountry
+				? selectedCountry.isoCode
+				: countries.find((country: Country) => country.isoCode === "NL")
+						?.isoCode || "NL";
+			const holidays = await getHoldidaysByCountry({
+				countryIsoCode,
+				validFrom,
+				validTo,
+			});
+
+			setHolidays(holidays);
+			console.log(holidays);
+		};
+		fetchHolidays();
+	}, [selectedCountry, countries]);
 	return (
 		<div className="App">
 			<Dropdown
@@ -34,9 +71,7 @@ function App() {
 			/>
 
 			{/* Holiday List */}
-			<div>
-				<ul></ul>
-			</div>
+			<Table data={holidays} />
 		</div>
 	);
 }
