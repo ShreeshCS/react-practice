@@ -1,10 +1,10 @@
-import { Holiday } from "../App";
-
+import "../styles/Table.scss";
+import { Holiday } from "../types/types";
 type TableProps = {
 	data: Holiday[];
 };
 const Table: React.FC<TableProps> = (props) => {
-	// const { data } = props;
+	const { data } = props;
 	const columns = [
 		{
 			id: 0,
@@ -21,14 +21,30 @@ const Table: React.FC<TableProps> = (props) => {
 	];
 	return (
 		<div className="table-outer">
-			<div className="table-header">
-				{columns.map((column) => (
-					<div key={column.id} className="table-header-cell">
-						{column.label}
-					</div>
-				))}
-			</div>
-			<div className="table-rows-container"></div>
+			<table>
+				<thead className="table-header">
+					<tr>
+						{columns.map((column) => (
+							<th key={column.id} className="table-header-cell">
+								{column.label}
+							</th>
+						))}
+					</tr>
+				</thead>
+				<tbody>
+					{data.map((row, idx) => (
+						<tr key={idx} className="table-row">
+							<td className="table-row-cell">
+								{row.name[0].text}
+							</td>
+							<td className="table-row-cell">{row.startDate}</td>
+							<td className="table-row-cell">
+								{row.regionalScope}
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
 		</div>
 	);
 };
