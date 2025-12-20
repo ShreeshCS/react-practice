@@ -1,8 +1,8 @@
-import { Country } from "../App";
+import { Country } from "../types/types";
 
 type DropdownProps = {
 	countries: Country[];
-	value: Country | undefined;
+	value: string | undefined;
 	onChange: React.ChangeEventHandler<HTMLSelectElement>;
 };
 const Dropdown: React.FC<DropdownProps> = (props) => {
@@ -12,11 +12,15 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 			<select
 				aria-label="country dropdown"
 				className="country-dropdown"
-				value={value?.isoCode}
+				value={value}
 				onChange={onChange}
 			>
 				{countries.map((country: Country, idx) => (
-					<option key={idx} value={country.isoCode}>
+					<option
+						className="country-option"
+						key={idx}
+						value={country.isoCode}
+					>
 						{country.name[0].text}
 					</option>
 				))}

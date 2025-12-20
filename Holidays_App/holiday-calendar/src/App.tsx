@@ -3,35 +3,16 @@ import Dropdown from "./components/Dropdown";
 import { getCountries, getHoldidaysByCountry } from "./api/holidays.api";
 import { formatDateMMDDYYYY } from "./utility/app.util";
 import Table from "./components/Table";
-
-export interface Country {
-	isoCode: string;
-	name: {
-		language: string;
-		text: string;
-	}[];
-	officialLanguages: string[];
-}
-
-export interface Holiday {
-	id: string;
-	name: {
-		language: string;
-		text: string;
-	}[];
-	startDate: string;
-	endDate: string;
-	type: string;
-	regionalScope: string;
-}
+import "../src/styles/App.scss";
+import { Country, Holiday } from "./types/types";
 
 function App() {
 	const [countries, setCountries] = useState<Country[]>([]);
-	const [selectedCountry, setSelectedCountry] = useState<Country>();
+	const [selectedCountryCode, setSelectedCountryCode] = useState<string>();
 	const [holidays, setHolidays] = useState<Holiday[]>([]);
 	useEffect(() => {
 		const fetchCountries = async () => {
-			const countries = await getCountries();
+			const countries: Country[] = await getCountries();
 
 			setCountries(countries);
 		};
@@ -47,8 +28,9 @@ function App() {
 			nextYearDate.setFullYear(currentDate.getFullYear() + 1);
 			const validTo = formatDateMMDDYYYY(nextYearDate);
 
-			const countryIsoCode = selectedCountry
-				? selectedCountry.isoCode
+			console.log(selectedCountryCode);
+			const countryIsoCode = selectedCountryCode
+				? selectedCountryCode
 				: countries.find((country: Country) => country.isoCode === "NL")
 						?.isoCode || "NL";
 			const holidays = await getHoldidaysByCountry({
@@ -61,13 +43,13 @@ function App() {
 			console.log(holidays);
 		};
 		fetchHolidays();
-	}, [selectedCountry, countries]);
+	}, [selectedCountryCode, countries]);
 	return (
 		<div className="App">
 			<Dropdown
 				countries={countries}
-				value={selectedCountry}
-				onChange={(e: any) => setSelectedCountry(e.target.value)}
+				value={selectedCountryCode}
+				onChange={(e: any) => setSelectedCountryCode(e.target.value)}
 			/>
 
 			{/* Holiday List */}

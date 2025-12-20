@@ -1,5 +1,41 @@
+@import "color.pallet";
+
 .table-outer {
-    background-color: rgb(162, 162, 162);
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
+}
+
+table {
+	width: 80%;
+	border-collapse: collapse;
+}
+
+.table-header {
+	background-color: $purple;
+}
+
+.table-header-cell {
+	min-width: 250px;
+	padding: 5px;
+	border-right: 1px solid black;
+	text-align: center;
+	color: #fff;
+}
+
+.table-header-cell:last-child {
+	border-right: none;
+}
+
+.table-row-cell {
+	padding: 5px;
+	border: 1px solid black;
+	text-align: center;
+}
+
+.table-row {
+	background-color: $light-purple;
 }
